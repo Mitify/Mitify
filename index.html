@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miitify - منصة الكورسات الإلكترونية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <style>
+        /* إضافة أنيميشن الكتابة */
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #4a6cf7; }
+        }
+        
+        .typing-animation {
+            overflow: hidden;
+            border-right: .15em solid #4a6cf7;
+            white-space: nowrap;
+            margin: 0 auto;
+            animation: 
+                typing 3.5s steps(40, end),
+                blink-caret .75s step-end infinite;
+        }
+        
+        /* تحسين زر ابدأ التعلم الآن */
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .hero-buttons .btn-primary {
+            font-size: 1.2rem;
+            padding: 12px 30px;
+        }
+        #hoha{
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>  
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Miitify</span>
+                </a>
+                
+                <nav class="nav-links">
+                    <a href="#home">الرئيسية</a>
+                    <a href="#courses">الكورسات</a>
+                    <a href="#about">من نحن</a>
+                    <a href="#contact">اتصل بنا</a>
+                </nav>
+                
+                <div class="header-actions">
+                    <div class="language-switcher">
+                        <button class="icon-btn" id="languageBtn">
+                            <i class="fas fa-globe"></i>
+                        </button>
+                        <div class="language-menu" id="languageMenu">
+                            <div class="language-option" data-lang="ar">
+                                <i class="fas fa-check hidden" id="checkAr"></i>
+                                العربية
+                            </div>
+                            <div class="language-option" data-lang="en">
+                                <i class="fas fa-check hidden" id="checkEn"></i>
+                                English
+                            </div>
+                            <div class="language-option" data-lang="fr">
+                                <i class="fas fa-check hidden" id="checkFr"></i>
+                                Français
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dark-mode-toggle">
+                        <input type="checkbox" id="darkModeToggle">
+                        <label for="darkModeToggle" class="slider"></label>
+                    </div>
+                    
+                    <button class="btn btn-primary">
+                        <i class="fas fa-user"></i>
+                        تسجيل الدخول
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="typing-animation">اكتشف عالم المعرفة مع Miitify</h1>
+                <p>منصة تعليمية متكاملة تقدم أفضل الكورسات في مختلف المجالات. طور مهاراتك وارتق بمستواك المهني مع مدربين محترفين.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary pulse" id="startLearningBtn">
+                        <i class="fas fa-play-circle"></i>
+                        ابدأ التعلم الآن
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+             <center>
+            <h1 id="hoha">من نحن</h1>
+            <div class="about-content">
+                <p>نحن منصة Miitify للتعليم الإلكتروني، نهدف إلى تقديم محتوى تعليمي عالي الجودة في مختلف المجالات. نساعدك على تطوير مهاراتك وتحقيق أهدافك المهنية من خلال دورات تدريبية شاملة يقدمها مدربون محترفون.</p>
+                <p>رسالتنا هي جعل التعليم الجيد متاحاً للجميع، في أي وقت ومن أي مكان، مع الحفاظ على أعلى معايير الجودة والمحتوى التعليمي المتميز.</p>
+            </div>
+            </center>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section id="courses">
+        <div class="container">
+            <h2 class="section-title">الكورسات المتاحة</h2>
+            
+            <div class="courses-grid" id="coursesContainer">
+                <!-- Courses will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Modal -->
+    <div class="modal" id="registrationModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h2 class="modal-title">تسجيل في الكورس</h2>
+            <form id="registrationForm">
+                <input type="hidden" id="selectedCourseId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">الاسم</label>
+                        <input type="text" id="firstName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">اللقب</label>
+                        <input type="text" id="lastName" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="phone">رقم الهاتف</label>
+                    <input type="tel" id="phone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">البريد الإلكتروني</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-paper-plane"></i>
+                    إرسال التسجيل
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Access Button -->
+    <div class="admin-access">
+        <button class="admin-btn" id="adminAccessBtn" title="الدخول إلى لوحة الإدارة">
+            <i class="fas fa-cog"></i>
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>عن Miitify</h3>
+                    <p>منصة تعليمية رائدة تهدف إلى تقديم محتوى تعليمي عالي الجودة في مختلف المجالات، نساعدك على تطوير مهاراتك وتحقيق أهدافك المهنية.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>روابط سريعة</h3>
+                    <ul class="footer-links">
+                        <li><a href="#home"><i class="fas fa-chevron-left"></i> الرئيسية</a></li>
+                        <li><a href="#courses"><i class="fas fa-chevron-left"></i> الكورسات</a></li>
+                        <li><a href="#about"><i class="fas fa-chevron-left"></i> من نحن</a></li>
+                        <li><a href="#contact"><i class="fas fa-chevron-left"></i> اتصل بنا</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>اتصل بنا</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i>زموري ولاية بومرداس الجزائر</a></li>
+                        <li><a href="mailto:info@miitify.com"><i class="fas fa-envelope"></i>faresmnsr20081@gmail.comm</a></li>
+                        <li><a href="tel:+966512345678"><i class="fas fa-phone"></i>0542793168</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>جميع الحقوق محفوظة &copy; 2026 Miitify</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample courses data
+        const sampleCourses = [
+            {
+                id: 1,
+                title: "تطوير الويب المتقدم",
+                category: "تطوير الويب",
+                instructor: "أحمد محمد",
+                duration: 40,
+                level: "متقدم",
+                price: 99.99,
+                description: "تعلم تطوير الويب باستخدام أحدث التقنيات والأطر مثل React وNode.js",
+                icon: "fas fa-laptop-code"
+            },
+            {
+                id: 2,
+                title: "تعلم Python من الصفر",
+                category: "برمجة",
+                instructor: "سارة أحمد",
+                duration: 30,
+                level: "مبتدئ",
+                price: 79.99,
+                description: "ابدأ رحلتك في البرمجة مع لغة Python المتعددة الاستخدامات",
+                icon: "fas fa-code"
+            },
+            {
+                id: 3,
+                title: "تصميم UI/UX للمبتدئين",
+                category: "تصميم",
+                instructor: "محمد علي",
+                duration: 25,
+                level: "مبتدئ",
+                price: 69.99,
+                description: "تعلم أساسيات تصميم واجهات المستخدم وتجربة المستخدم",
+                icon: "fas fa-palette"
+            }
+        ];
+
+        // Initialize courses from localStorage or use sample data
+        let courses = JSON.parse(localStorage.getItem('miitify-courses')) || sampleCourses;
+        
+        // DOM Elements
+        const coursesContainer = document.getElementById('coursesContainer');
+        const registrationForm = document.getElementById('registrationForm');
+        const languageBtn = document.getElementById('languageBtn');
+        const languageMenu = document.getElementById('languageMenu');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const checkAr = document.getElementById('checkAr');
+        const checkEn = document.getElementById('checkEn');
+        const checkFr = document.getElementById('checkFr');
+        const adminAccessBtn = document.getElementById('adminAccessBtn');
+        const startLearningBtn = document.getElementById('startLearningBtn');
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCourses();
+            setupEventListeners();
+            updateLanguageIcons();
+            setupSmoothScrolling();
+            setupTypingAnimation();
+        });
+
+        // Setup typing animation
+        function setupTypingAnimation() {
+            const typingElement = document.querySelector('.typing-animation');
+            
+            // إعادة تشغيل الأنيميشن كل 10 ثوانٍ
+            setInterval(() => {
+                // إعادة تعيين الأنيميشن
+                typingElement.style.animation = 'none';
+                void typingElement.offsetWidth; // إعادة التدفق لإعادة تشغيل الأنيميشن
+                typingElement.style.animation = 
+                    'typing 3.5s steps(40, end), blink-caret .75s step-end infinite';
+            }, 10000);
+        }
+
+        // Setup smooth scrolling for navigation
+        function setupSmoothScrolling() {
+            // التنقل في القائمة الرئيسية
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    
+                    if (targetSection) {
+                        targetSection.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // زر ابدأ التعلم الآن - التمرير إلى الدورات
+            startLearningBtn.addEventListener('click', function() {
+                document.getElementById('courses').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        }
+
+        // Render courses to the page
+        function renderCourses() {
+            coursesContainer.innerHTML = '';
+            
+            courses.forEach(course => {
+                const courseCard = document.createElement('div');
+                courseCard.className = 'course-card';
+                courseCard.innerHTML = `
+                    <div class="course-image">
+                        ${course.icon.startsWith('data:image') ? 
+                            `<img src="${course.icon}" alt="${course.title}">` : 
+                            `<i class="${course.icon}"></i>`
+                        }
+                    </div>
+                    <div class="course-meta">
+                        <span><i class="far fa-clock"></i> ${course.duration} ساعة</span>
+                        <span><i class="fas fa-signal"></i> ${course.level}</span>
+                    </div>
+                    <p>${course.description}</p>
+                    <div class="course-price">$${course.price}</div>
+                    <div class="course-actions">
+                        <button class="btn btn-primary register-course" data-id="${course.id}">
+                            <i class="fas fa-shopping-cart"></i>
+                            اشترك الآن
+                        </button>
+                    </div>
+                `;
+                
+                coursesContainer.appendChild(courseCard);
+            });
+            
+            // Add event listeners to register buttons
+            document.querySelectorAll('.register-course').forEach(button => {
+                button.addEventListener('click', function() {
+                    const courseId = parseInt(this.getAttribute('data-id'));
+                    openRegistrationModal(courseId);
+                });
+            });
+        }
+
+        // Open registration modal
+        function openRegistrationModal(courseId) {
+            document.getElementById('selectedCourseId').value = courseId;
+            document.getElementById('registrationModal').style.display = 'flex';
+        }
+
+        // Setup event listeners for index page
+        function setupEventListeners() {
+            // Registration form submission
+            registrationForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                registerForCourse();
+            });
+            
+            // Close modal
+            document.getElementById('closeModal').addEventListener('click', function() {
+                document.getElementById('registrationModal').style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                const modal = document.getElementById('registrationModal');
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // Admin access button
+            adminAccessBtn.addEventListener('click', function() {
+                const password = prompt('الرجاء إدخال كلمة المرور للوصول إلى لوحة الإدارة:');
+                if (password === 'faresfares200891') {
+                    window.location.href = 'edit-courses.html';
+                } else if (password !== null) {
+                    alert('كلمة المرور غير صحيحة!');
+                }
+            });
+            
+            // Language switcher
+            languageBtn.addEventListener('click', function() {
+                languageMenu.classList.toggle('show');
+            });
+            
+            // Language selection
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    changeLanguage(lang);
+                    languageMenu.classList.remove('show');
+                });
+            });
+            
+            // Dark mode toggle
+            darkModeToggle.addEventListener('change', function() {
+                document.body.classList.toggle('dark-mode', this.checked);
+                localStorage.setItem('miitify-darkmode', this.checked);
+            });
+            
+            // Close language menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!languageBtn.contains(e.target) && !languageMenu.contains(e.target)) {
+                    languageMenu.classList.remove('show');
+                }
+            });
+            
+            // Load dark mode preference
+            const darkModePref = localStorage.getItem('miitify-darkmode') === 'true';
+            darkModeToggle.checked = darkModePref;
+            document.body.classList.toggle('dark-mode', darkModePref);
+        }
+
+        // Register for a course
+        function registerForCourse() {
+            const courseId = parseInt(document.getElementById('selectedCourseId').value);
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            
+            const courses = JSON.parse(localStorage.getItem('miitify-courses')) || sampleCourses;
+            const course = courses.find(c => c.id === courseId);
+            
+            if (!course) {
+                alert('خطأ: الكورس غير موجود');
+                return;
+            }
+            
+            // Send data to Telegram
+            sendToTelegram(course, firstName, lastName, phone, email);
+            
+            // Reset form and close modal
+            registrationForm.reset();
+            document.getElementById('registrationModal').style.display = 'none';
+            
+            alert('تم إرسال طلب التسجيل بنجاح! سنتواصل معك قريباً.');
+        }
+
+        // Send registration data to Telegram
+        function sendToTelegram(course, firstName, lastName, phone, email) {
+            // Replace with your actual Telegram bot token and chat ID
+            const botToken = '8005883938:AAGFXYe-x7mY1f_79FoFhuy4Ox6GNDjvi6M';
+            const chatId = '8249819893';
+            
+            const message = `
+📋 تسجيل جديد في منصة Miitify
+
+👤 الاسم: ${firstName} ${lastName}
+📞 الهاتف: ${phone}
+📧 البريد الإلكتروني: ${email}
+
+🎓 الكورس: ${course.title}
+📚 التصنيف: ${course.category}
+👨‍🏫 المدرب: ${course.instructor}
+💰 السعر: $${course.price}
+⏱️ المدة: ${course.duration} ساعة
+📊 المستوى: ${course.level}
+
+🕒 الوقت: ${new Date().toLocaleString('ar-SA')}
+            `;
+            
+            // Using Telegram Bot API
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Message sent to Telegram:', data);
+            })
+            .catch(error => {
+                console.error('Error sending to Telegram:', error);
+                // In case of error, you can store the data locally
+                storeRegistrationLocally(course, firstName, lastName, phone, email);
+            });
+        }
+
+        // Store registration locally if Telegram fails
+        function storeRegistrationLocally(course, firstName, lastName, phone, email) {
+            const registrations = JSON.parse(localStorage.getItem('miitify-registrations')) || [];
+            const newRegistration = {
+                id: Date.now(),
+                courseId: course.id,
+                courseTitle: course.title,
+                firstName,
+                lastName,
+                phone,
+                email,
+                timestamp: new Date().toISOString()
+            };
+            
+            registrations.push(newRegistration);
+            localStorage.setItem('miitify-registrations', JSON.stringify(registrations));
+        }
+
+        // Change language
+        function changeLanguage(lang) {
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            localStorage.setItem('miitify-language', lang);
+            updateLanguageIcons();
+            
+            // In a real application, you would update all text content based on the selected language
+            alert(`Language changed to ${lang}. In a real application, all text would be translated.`);
+        }
+
+        // Update language selection icons
+        function updateLanguageIcons() {
+            const currentLang = localStorage.getItem('miitify-language') || 'ar';
+            
+            // Hide all check icons
+            checkAr.classList.add('hidden');
+            checkEn.classList.add('hidden');
+            checkFr.classList.add('hidden');
+            
+            // Show check icon for current language
+            if (currentLang === 'ar') {
+                checkAr.classList.remove('hidden');
+            } else if (currentLang === 'en') {
+                checkEn.classList.remove('hidden');
+            } else if (currentLang === 'fr') {
+                checkFr.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

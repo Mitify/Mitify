@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة إدارة الكورسات - Miitify</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .password-protection {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+        
+        .password-form {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .password-form h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .admin-content {
+            display: none;
+        }
+        
+        .course-item {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* أنماط رفع الأيقونة - معدلة */
+        .icon-upload-container {
+            border: 2px dashed #ddd;
+            border-radius: 15px;
+            padding: 25px;
+            background: var(--bg);
+            transition: all 0.3s ease;
+        }
+
+        .icon-upload-container:hover {
+            border-color: var(--primary);
+            background: #f8f9ff;
+        }
+
+        .icon-preview {
+            text-align: center;
+            padding: 30px;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 12px;
+            border: 2px solid #eee;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .icon-preview i {
+            font-size: 5rem !important;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .icon-preview img {
+            max-width: 120px !important;
+            max-height: 120px !important;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .icon-preview span {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-top: 10px;
+        }
+
+        .upload-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .upload-options .btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 1rem;
+        }
+
+        .fontawesome-selector {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #eee;
+        }
+
+        .fa-icons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .fa-icon-option {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .fa-icon-option:hover {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .fa-icon-option.selected {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .fa-icon-option i {
+            font-size: 1.5rem !important;
+        }
+
+        /* تحديث أنماط عرض الكورسات في القائمة */
+        .course-item-icon {
+            width: 60px !important;
+            height: 60px !important;
+            border-radius: 12px;
+            margin-left: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-light), var(--accent));
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .course-item-icon img {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .course-item-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .course-item-details h4 {
+            margin: 0 0 5px 0;
+            color: var(--primary);
+        }
+
+        .course-item-details p {
+            margin: 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* رسالة النجاح */
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #c3e6cb;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInOut 3s ease-in-out;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-10px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+
+        .success-message i {
+            color: #28a745;
+        }
+
+        .error-message i {
+            color: #dc3545;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Protection -->
+    <div class="password-protection" id="passwordSection">
+        <div class="password-form">
+            <h2><i class="fas fa-lock"></i> الدخول إلى لوحة الإدارة</h2>
+            <div class="form-group">
+                <input type="password" id="adminPassword" class="form-control" placeholder="أدخل كلمة المرور">
+            </div>
+            <button class="btn btn-primary" id="loginBtn" style="width: 100%;">
+                <i class="fas fa-sign-in-alt"></i>
+                دخول
+            </button>
+            <a href="index.html" class="btn btn-secondary" style="width: 100%; margin-top: 10px;">
+                <i class="fas fa-arrow-right"></i>
+                العودة للرئيسية
+            </a>
+        </div>
+    </div>
+
+    <!-- Admin Content (Hidden until password is verified) -->
+    <div class="admin-content" id="adminContent">
+        <!-- Header -->
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <a href="index.html" class="logo">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Miitify - لوحة الإدارة</span>
+                    </a>
+                    
+                    <nav class="nav-links">
+                        <a href="index.html">العودة للرئيسية</a>
+                    </nav>
+                    
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            تسجيل الخروج
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Admin Panel -->
+        <section id="admin">
+            <div class="container">
+                <h2 class="section-title">لوحة إدارة الكورسات</h2>
+                
+                <div class="admin-panel">
+                    <h3><i class="fas fa-plus-circle"></i> إضافة كورس جديد</h3>
+                    
+                    <form id="courseForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="courseTitle">اسم الكورس</label>
+                                <input type="text" id="courseTitle" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="courseCategory">التصنيف</label>
+                                <select id="courseCategory" class="form-control" required>
+                                    <option value="تطوير الويب">تطوير الويب</option>
+                                    <option value="برمجة">برمجة</option>
+                                    <option value="تصميم">تصميم</option>
+                                    <option value="تسويق">تسويق</option>
+                                    <option value="أعمال">أعمال</option>
+                                    <option value="مهارات شخصية">مهارات شخصية</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="courseInstructor">اسم المدرب</label>
+                                <input type="text" id="courseInstructor" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="courseDuration">المدة (ساعات)</label>
+                                <input type="number" id="courseDuration" class="form-control" min="1" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="courseLevel">المستوى</label>
+                                <select id="courseLevel" class="form-control" required>
+                                    <option value="مبتدئ">مبتدئ</option>
+                                    <option value="متوسط">متوسط</option>
+                                    <option value="متقدم">متقدم</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="coursePrice">السعر (دج)</label>
+                                <input type="number" id="coursePrice" class="form-control" min="0" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="courseDescription">وصف الكورس</label>
+                            <textarea id="courseDescription" class="form-control" rows="4" required></textarea>
+                        </div>
+                        
+                        <!-- قسم رفع الأيقونة -->
+                        <div class="form-group">
+                            <label for="courseIcon">أيقونة الكورس</label>
+                            <div class="icon-upload-container">
+                                <div class="icon-preview" id="iconPreview">
+                                    <i class="fas fa-image"></i>
+                                    <span>لم يتم اختيار أيقونة</span>
+                                </div>
+                                <div class="upload-options">
+                                    <input type="file" id="iconUpload" accept="image/*" class="hidden">
+                                    <button type="button" class="btn btn-secondary" id="uploadBtn">
+                                        <i class="fas fa-upload"></i>
+                                        رفع صورة
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="fontAwesomeBtn">
+                                        <i class="fas fa-icons"></i>
+                                        استخدام Font Awesome
+                                    </button>
+                                </div>
+                                <div class="fontawesome-selector hidden" id="fontAwesomeSelector">
+                                    <input type="text" id="fontAwesomeInput" class="form-control" placeholder="أدخل اسم أيقونة Font Awesome (مثال: fas fa-laptop-code)">
+                                    <div class="fa-icons-grid" id="faIconsGrid">
+                                        <!-- الأيقونات الشائعة -->
+                                    </div>
+                                </div>
+                                <input type="hidden" id="courseIcon" name="courseIcon" value="fas fa-laptop-code">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus-circle"></i>
+                            إضافة الكورس
+                        </button>
+                    </form>
+                </div>
+
+                <div class="admin-panel">
+                    <h3><i class="fas fa-edit"></i> الكورسات الحالية</h3>
+                    <div id="coursesList">
+                        <!-- Courses will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Sample courses data
+        const sampleCourses = [
+            {
+                id: 1,
+                title: "تطوير الويب المتقدم",
+                category: "تطوير الويب",
+                instructor: "أحمد محمد",
+                duration: 40,
+                level: "متقدم",
+                price: 99.99,
+                description: "تعلم تطوير الويب باستخدام أحدث التقنيات والأطر مثل React وNode.js",
+                icon: "fas fa-laptop-code"
+            },
+            {
+                id: 2,
+                title: "تعلم Python من الصفر",
+                category: "برمجة",
+                instructor: "سارة أحمد",
+                duration: 30,
+                level: "مبتدئ",
+                price: 79.99,
+                description: "ابدأ رحلتك في البرمجة مع لغة Python المتعددة الاستخدامات",
+                icon: "fas fa-code"
+            },
+            {
+                id: 3,
+                title: "تصميم UI/UX للمبتدئين",
+                category: "تصميم",
+                instructor: "محمد علي",
+                duration: 25,
+                level: "مبتدئ",
+                price: 69.99,
+                description: "تعلم أساسيات تصميم واجهات المستخدم وتجربة المستخدم",
+                icon: "fas fa-palette"
+            }
+        ];
+
+        // أيقونات Font Awesome الشائعة
+        const commonFaIcons = [
+            'fas fa-laptop-code', 'fas fa-code', 'fas fa-palette', 'fas fa-chart-line',
+            'fas fa-briefcase', 'fas fa-brain', 'fas fa-mobile-alt', 'fas fa-database',
+            'fas fa-cloud', 'fas fa-shield-alt', 'fas fa-gamepad', 'fas fa-camera',
+            'fas fa-video', 'fas fa-music', 'fas fa-language', 'fas fa-graduation-cap',
+            'fas fa-book', 'fas fa-pencil-alt', 'fas fa-calculator', 'fas fa-flask'
+        ];
+
+        // DOM Elements
+        const passwordSection = document.getElementById('passwordSection');
+        const adminContent = document.getElementById('adminContent');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const adminPassword = document.getElementById('adminPassword');
+
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = localStorage.getItem('miitify-admin-loggedin');
+            if (isLoggedIn === 'true') {
+                showAdminContent();
+            }
+        });
+
+        // Login functionality
+        loginBtn.addEventListener('click', function() {
+            const password = adminPassword.value;
+            if (password === 'faresfares200891') {
+                localStorage.setItem('miitify-admin-loggedin', 'true');
+                showAdminContent();
+            } else {
+                alert('كلمة المرور غير صحيحة!');
+                adminPassword.value = '';
+                adminPassword.focus();
+            }
+        });
+
+        // Allow pressing Enter to login
+        adminPassword.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loginBtn.click();
+            }
+        });
+
+        // Logout functionality
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                localStorage.removeItem('miitify-admin-loggedin');
+                hideAdminContent();
+            });
+        }
+
+        // Show admin content
+        function showAdminContent() {
+            passwordSection.style.display = 'none';
+            adminContent.style.display = 'block';
+            renderCoursesList();
+            setupEventListeners();
+            initIconUploadSystem();
+        }
+
+        // Hide admin content
+        function hideAdminContent() {
+            passwordSection.style.display = 'flex';
+            adminContent.style.display = 'none';
+            adminPassword.value = '';
+        }
+
+        // Setup event listeners for edit page
+        function setupEventListeners() {
+            // Course form submission
+            document.getElementById('courseForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addCourse();
+            });
+        }
+
+        // إضافة كورس جديد بدون رسالة منبثقة
+        function addCourse() {
+            const title = document.getElementById('courseTitle').value;
+            const category = document.getElementById('courseCategory').value;
+            const instructor = document.getElementById('courseInstructor').value;
+            const duration = parseInt(document.getElementById('courseDuration').value);
+            const level = document.getElementById('courseLevel').value;
+            const price = parseInt(document.getElementById('coursePrice').value);
+            const description = document.getElementById('courseDescription').value;
+            const icon = document.getElementById('courseIcon').value;
+
+            const courses = JSON.parse(localStorage.getItem('miitify-courses')) || sampleCourses;
+            
+            const newCourse = {
+                id: courses.length > 0 ? Math.max(...courses.map(c => c.id)) + 1 : 1,
+                title,
+                category,
+                instructor,
+                duration,
+                level,
+                price,
+                description,
+                icon
+            };
+            
+            courses.push(newCourse);
+            localStorage.setItem('miitify-courses', JSON.stringify(courses));
+            
+            // إعادة تعيين النموذج
+            resetCourseForm();
+            
+            // تحديث القائمة
+            renderCoursesList();
+            
+            // إظهار رسالة نجاح مؤقتة بدون منبثق
+            showSuccessMessage('تم إضافة الكورس بنجاح!');
+        }
+
+        // تحديث كورس موجود بدون رسالة منبثقة
+        function updateCourse(courseId) {
+            const title = document.getElementById('courseTitle').value;
+            const category = document.getElementById('courseCategory').value;
+            const instructor = document.getElementById('courseInstructor').value;
+            const duration = parseInt(document.getElementById('courseDuration').value);
+            const level = document.getElementById('courseLevel').value;
+            const price = parseInt(document.getElementById('coursePrice').value);
+            const description = document.getElementById('courseDescription').value;
+            const icon = document.getElementById('courseIcon').value;
+            
+            const courses = JSON.parse(localStorage.getItem('miitify-courses')) || sampleCourses;
+            const courseIndex = courses.findIndex(c => c.id === courseId);
+            
+            if (courseIndex === -1) {
+                showSuccessMessage('الكورس غير موجود', 'error');
+                return;
+            }
+            
+            courses[courseIndex] = {
+                ...courses[courseIndex],
+                title,
+                category,
+                instructor,
+                duration,
+                level,
+                price,
+                description,
+                icon
+            };
+            
+            localStorage.setItem('miitify-courses', JSON.stringify(courses));
+            
+            // إعادة تعيين النموذج والخروج من وضع التعديل
+            resetCourseForm();
+            exitEditMode();
+            
+            // تحديث القائمة
+            renderCoursesList();
+            
+            // إظهار رسالة نجاح مؤقتة
+            showSuccessMessage('تم تحديث الكورس بنجاح!');
+        }
+
+        // إعادة تعيين النموذج
+        function resetCourseForm() {
+            document.getElementById('courseForm').reset();
+            document.getElementById('iconPreview').innerHTML = `
+                <i class="fas fa-image"></i>
+                <span>لم يتم اختيار أيقونة</span>
+            `;
+            document.getElementById('courseIcon').value = 'fas fa-laptop-code';
+            document.getElementById('fontAwesomeSelector').classList.add('hidden');
+            document.getElementById('fontAwesomeInput').value = '';
+            
+            // إزالة التحديد من أيقونات Font Awesome
+            document.querySelectorAll('.fa-icon-option').forEach(icon => {
+                icon.classList.remove('selected');
+            });
+        }
+
+        // الخروج من وضع التعديل
+        function exitEditMode() {
+            const submitBtn = document.querySelector('#courseForm button[type="submit"]');
+            submitBtn.disabled = false;
+            
+            const updateBtn = document.getElementById('updateCourseBtn');
+            if (updateBtn) {
+                updateBtn.remove();
+            }
+        }
+
+        // إظهار رسالة نجاح مؤقتة
+        function showSuccessMessage(message, type = 'success') {
+            // إزالة أي رسالة سابقة
+            const existingMessage = document.querySelector('.success-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `success-message ${type === 'error' ? 'error-message' : ''}`;
+            messageDiv.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            // إدراج الرسالة قبل النموذج
+            const courseForm = document.getElementById('courseForm');
+            courseForm.parentNode.insertBefore(messageDiv, courseForm);
+            
+            // إزالة الرسالة تلقائياً بعد 3 ثوانٍ
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 3000);
+        }
+
+        // Render courses list for editing
+        function renderCoursesList() {
+            const coursesList = document.getElementById('coursesList');
+            const courses = JSON.parse(localStorage.getItem('miitify-courses')) || sampleCourses;
+            
+            coursesList.innerHTML = '';
+            
+            if (courses.length === 0) {
+                coursesList.innerHTML = '<p class="text-center">لا توجد كورسات حالياً</p>';
+                return;
+            }
+            
+            courses.forEach(course => {
+                const courseItem = document.createElement('div');
+                courseItem.className = 'course-item';
+                
+                // تحديد كيفية عرض الأيقونة بشكل أكبر
+                const iconDisplay = course.icon.startsWith('data:image') ? 
+                    `<div class="course-item-icon"><img src="${course.icon}" alt="${course.title}"></div>` :
+                    `<div class="course-item-icon"><i class="${course.icon}"></i></div>`;
+                
+                courseItem.innerHTML = `
+                    <div class="course-item-info">
+                        ${iconDisplay}
+                        <div class="course-item-details">
+                            <h4>${course.title}</h4>
+                            <p>${course.category} | ${course.instructor} | ${course.price} دج</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary edit-course" data-id="${course.id}">
+                            <i class="fas fa-edit"></i>
+                            تعديل
+                        </button>
+                        <button class="btn btn-secondary delete-course" data-id="${course.id}" style="background: var(--secondary); border-color: var(--secondary);">
+                            <i class="fas fa-trash"></i>
+                            حذف
+                        </button>
+                    </div>
+                `;
+                
+                coursesList.appendChild(courseItem);
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-course').forEach(button => {
+                button.addEventListener('click', function() {
+                    const courseId = parseInt(this.getAttribute('data-id'));
+                    editCourse(courseId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-course').forEach(button => {
+                button.addEventListener('click', function() {
+                    const courseId = parseInt(this.getAttribute('data-id'));
+                    deleteCourse(courseId);
+                });
+            });
+        }
+
+        // Edit a course
+        function editCourse(courseId) {
+            const courses = JSON.parse(localStorage.getItem('miitify-courses')) || sampleCourses;
+            const course = courses.find(c => c.id === courseId);
+            
+            if (!course) {
+                showSuccessMessage('الكورس غير موجود', 'error');
+                return;
+            }
+            
+            // Fill form with course data
+            document.getElementById('courseTitle').value = course.title;
+            document.getElementById('courseCategory').value = course.category;
+            document.getElementById('courseInstructor').value = course.instructor;
+            document.getElementById('courseDuration').value = course.duration;
+            document.getElementById('courseLevel').value = course.level;
+            document.getElementById('coursePrice').value = course.price;
+            document.getElementById('courseDescription').value = course.description;
+            document.getElementById('courseIcon').value = course.icon;
+            
+            // عرض الأيقونة في المعاينة
+            const iconPreview = document.getElementById('iconPreview');
+            if (course.icon.startsWith('data:image')) {
+                // إذا كانت صورة
+                iconPreview.innerHTML = `
+                    <img src="${course.icon}" alt="معاينة الأيقونة">
+                    <span>أيقونة مرفوعة</span>
+                `;
+            } else {
+                // إذا كانت Font Awesome
+                iconPreview.innerHTML = `
+                    <i class="${course.icon}"></i>
+                    <span>${course.icon}</span>
+                `;
+            }
+            
+            // Change form to update mode
+            const form = document.getElementById('courseForm');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            
+            // Remove existing update button if exists
+            const existingUpdateBtn = document.getElementById('updateCourseBtn');
+            if (existingUpdateBtn) {
+                existingUpdateBtn.remove();
+            }
+            
+            // Create update button
+            const updateBtn = document.createElement('button');
+            updateBtn.type = 'button';
+            updateBtn.id = 'updateCourseBtn';
+            updateBtn.className = 'btn btn-primary';
+            updateBtn.innerHTML = '<i class="fas fa-save"></i> تحديث الكورس';
+            updateBtn.style.marginLeft = '10px';
+            
+            updateBtn.addEventListener('click', function() {
+                updateCourse(courseId);
+            });
+            
+            submitBtn.parentNode.appendChild(updateBtn);
+            submitBtn.disabled = true;
+            
+            // Scroll to form
+            document.getElementById('courseForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Delete a course
+        function deleteCourse(courseId) {
+            if (!confirm('هل أنت متأكد من حذف هذا الكورس؟')) {
+                return;
+            }
+            
+            const courses = JSON.parse(localStorage.getItem('miitify-courses')) || sampleCourses;
+            const updatedCourses = courses.filter(course => course.id !== courseId);
+            
+            localStorage.setItem('miitify-courses', JSON.stringify(updatedCourses));
+            renderCoursesList();
+            
+            showSuccessMessage('تم حذف الكورس بنجاح!');
+        }
+
+        // تهيئة نظام رفع الأيقونات
+        function initIconUploadSystem() {
+            const uploadBtn = document.getElementById('uploadBtn');
+            const fontAwesomeBtn = document.getElementById('fontAwesomeBtn');
+            const iconUpload = document.getElementById('iconUpload');
+            const fontAwesomeSelector = document.getElementById('fontAwesomeSelector');
+            const faIconsGrid = document.getElementById('faIconsGrid');
+            const iconPreview = document.getElementById('iconPreview');
+
+            // زر رفع الصورة
+            uploadBtn.addEventListener('click', function() {
+                iconUpload.click();
+            });
+
+            // معالجة رفع الصورة
+            iconUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 2 * 1024 * 1024) { // 2MB حد
+                        showSuccessMessage('حجم الصورة يجب أن يكون أقل من 2MB', 'error');
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // تحويل الصورة إلى Base64 وتخزينها
+                        const base64Image = e.target.result;
+                        document.getElementById('courseIcon').value = base64Image;
+                        
+                        // عرض المعاينة بشكل أكبر
+                        iconPreview.innerHTML = `
+                            <img src="${base64Image}" alt="معاينة الأيقونة">
+                            <span>تم رفع الأيقونة بنجاح</span>
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // زر Font Awesome
+            fontAwesomeBtn.addEventListener('click', function() {
+                fontAwesomeSelector.classList.toggle('hidden');
+                if (!fontAwesomeSelector.classList.contains('hidden')) {
+                    loadFaIcons();
+                }
+            });
+
+            // تحميل أيقونات Font Awesome
+            function loadFaIcons() {
+                faIconsGrid.innerHTML = '';
+                commonFaIcons.forEach(iconClass => {
+                    const iconElement = document.createElement('div');
+                    iconElement.className = 'fa-icon-option';
+                    iconElement.innerHTML = `<i class="${iconClass}"></i>`;
+                    iconElement.addEventListener('click', function() {
+                        // إزالة التحديد من جميع الأيقونات
+                        document.querySelectorAll('.fa-icon-option').forEach(icon => {
+                            icon.classList.remove('selected');
+                        });
+                        // تحديد الأيقونة المختارة
+                        this.classList.add('selected');
+                        // تعيين القيمة
+                        document.getElementById('courseIcon').value = iconClass;
+                        document.getElementById('fontAwesomeInput').value = iconClass;
+                        // عرض المعاينة بشكل أكبر
+                        iconPreview.innerHTML = `
+                            <i class="${iconClass}"></i>
+                            <span>${iconClass}</span>
+                        `;
+                    });
+                    faIconsGrid.appendChild(iconElement);
+                });
+            }
+
+            // إدخال Font Awesome يدوي
+            document.getElementById('fontAwesomeInput').addEventListener('input', function(e) {
+                const value = e.target.value.trim();
+                if (value) {
+                    document.getElementById('courseIcon').value = value;
+                    iconPreview.innerHTML = `
+                        <i class="${value}"></i>
+                        <span>${value}</span>
+                    `;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
